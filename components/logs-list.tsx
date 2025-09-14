@@ -4,7 +4,7 @@ import type { Log } from '@/lib/data'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { memo, useRef } from 'react'
 
-export const Logs = memo(({ logs }: { logs: Array<Log> }) => {
+export const LogsList = memo(({ logs }: { logs: Array<Log> }) => {
   const parentRef = useRef(null)
 
   const rowVirtualizer = useVirtualizer({
@@ -12,6 +12,10 @@ export const Logs = memo(({ logs }: { logs: Array<Log> }) => {
     getScrollElement: () => parentRef.current,
     estimateSize: () => 88,
     overscan: 5,
+    getItemKey: (index) => {
+      const log = logs[index]
+      return Object.values(log).join('-')
+    },
   })
 
   const virtualItems = rowVirtualizer.getVirtualItems()
@@ -41,7 +45,7 @@ export const Logs = memo(({ logs }: { logs: Array<Log> }) => {
 
             return (
               <div
-                key={virtualRow.index}
+                key={virtualRow.key}
                 className="hover:bg-accent border-b h-[88px] flex"
                 style={{
                   // virtual row styles
@@ -63,4 +67,4 @@ export const Logs = memo(({ logs }: { logs: Array<Log> }) => {
   )
 })
 
-Logs.displayName = 'Logs'
+LogsList.displayName = 'Logs'

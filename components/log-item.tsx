@@ -1,5 +1,3 @@
-'use client'
-
 import { LogBadge } from '@/components/log-badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Log } from '@/lib/data'

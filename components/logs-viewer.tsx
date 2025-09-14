@@ -1,6 +1,6 @@
 'use client'
 
-import { Logs } from '@/components/logs'
+import { LogsList } from '@/components/logs-list'
 import { PageHeading } from '@/components/page-heading'
 import { Input } from '@/components/ui/input'
 import { Toggle } from '@/components/ui/toggle'
@@ -105,7 +105,7 @@ export function LogsViewer({ logs }: { logs: Array<Log> }) {
           </div>
         </div>
       </div>
-      <Logs logs={filteredLogs} />
+      <LogsList logs={filteredLogs} />
     </div>
   )
 }

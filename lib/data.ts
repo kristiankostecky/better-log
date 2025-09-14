@@ -1,4 +1,18 @@
+'server-only'
+
 import { LOG_LEVELS } from '@/lib/constants'
+
+interface ResponseSuccess {
+  data: Log[]
+  error: null
+}
+
+interface ResponseError {
+  data: null
+  error: Error
+}
+
+type Response = ResponseSuccess | ResponseError
 
 const LOG_SEPARATOR = '|=|'
 
@@ -44,18 +58,33 @@ function sortLogs(logs: Log[]): Log[] {
   )
 }
 
-export async function getLogs() {
-  const res = await fetch('https://challenges.betterstudio.io/logs', {
-    headers: { 'x-api-key': process.env.API_KEY as string },
-  })
+export async function getLogs(): Promise<Response> {
+  try {
+    const res = await fetch('https://challenges.betterstudio.io/logs', {
+      headers: { 'x-api-key': process.env.API_KEY as string },
+      cache: 'no-store',
+    })
 
-  console.log(res)
+    if (!res.ok) {
+      return {
+        data: null,
+        error: new Error(
+          `Failed to fetch data: ${res.status} ${res.statusText}`
+        ),
+      }
+    }
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch data')
+    const data = await res.json()
+    const logs = sortLogs(data.map(parseLog))
+
+    return {
+      data: logs,
+      error: null,
+    }
+  } catch (err) {
+    return {
+      data: null,
+      error: err instanceof Error ? err : new Error('Unknown error occurred'),
+    }
   }
-
-  const data = await (res.json() as Promise<Array<string>>)
-
-  return sortLogs(data.map(parseLog))
 }
