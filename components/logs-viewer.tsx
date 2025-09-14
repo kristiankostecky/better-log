@@ -31,17 +31,6 @@ export function LogsViewer({ logs }: { logs: Array<Log> }) {
     })
   )
 
-  const [filteredLogs, setFilteredLogs] = useState<Log[]>(() => {
-    return logs.filter((log) =>
-      log.message.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  })
-
-  const debounceSetFilteredLogs = useDebounceCallback(
-    setFilteredLogs,
-    DEBOUNCE_TIME
-  )
-
   const filterLogs = (messageSearch: string, logLevels: string[]) => {
     return logs.filter(
       (log) =>
@@ -49,6 +38,15 @@ export function LogsViewer({ logs }: { logs: Array<Log> }) {
         logLevels.includes(log.level)
     )
   }
+
+  const [filteredLogs, setFilteredLogs] = useState<Log[]>(() => {
+    return filterLogs(searchTerm, selectedLevels)
+  })
+
+  const debounceSetFilteredLogs = useDebounceCallback(
+    setFilteredLogs,
+    DEBOUNCE_TIME
+  )
 
   return (
     <div className="flex flex-col gap-4">
